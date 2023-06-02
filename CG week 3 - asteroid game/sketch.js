@@ -96,7 +96,9 @@ function checkCollisions(spaceship, asteroids){
       for (var j=0; j<bulletNum;j++){
         if (asteroids.diams.length>0){ // Calls isInside function only when any asteroid exists
           if (isInside(asteroids.locations[i],asteroids.diams[i], spaceship.bulletSys.bullets[j], spaceship.bulletSys.diam) ){
-            asteroids.destroy(i)
+            
+            asteroids.destroy(i,j,spaceship.bulletSys)
+            
             i=0 // Restarts the the asteroids loop - asteroid was removed so the indices became incorrect
           }
         }  

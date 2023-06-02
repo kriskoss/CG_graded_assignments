@@ -64,7 +64,7 @@ class AsteroidSystem {
       ellipse(this.locations[i].x, this.locations[i].y, this.diams[i], this.diams[i]);
       pop()
     }
-    console.log(this.runingExplosions.length)
+    
     for (var i = 0; i<this.runingExplosions.length; i++){ 
       
       this.runingExplosions[i].run()
@@ -83,9 +83,15 @@ class AsteroidSystem {
   }
 
   //destroys all data associated with each asteroid
-  destroy(index){
-    
-    this.explosions[index].explode(this.locations[index].x,this.locations[index].y,this.velocities[index].x,this.velocities[index].y, this.colours[index])
+  destroy(index, bulletIndex,bulletSys){
+    this.explosions[index].explode(
+      this.locations[index].x,
+      this.locations[index].y,
+      this.velocities[index].x,
+      this.velocities[index].y, 
+      this.colours[index],
+      bulletIndex,
+      bulletSys)
     this.runingExplosions.push(this.explosions[index])
     this.explosions.splice(index,1)
 

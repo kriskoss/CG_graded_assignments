@@ -1,10 +1,14 @@
 class Spaceship {
 
   constructor(){
-    this.reset()
+    this.emitterSmoke = new EmitterSmoke();  // EmitterSmoke is a subclass of Emitter - it is responsible for drawing the particles from the thrusters
+    this.reset() // Sets the spaceship to its initial state
+    
   }
+  
+  reset(){  
+    // This function resets the spaceship to its initial state
 
-  reset(){
     this.velocity = new createVector(0, 0);
     this.location = new createVector(width/2, height/2);
     this.acceleration = new createVector(0, 0);
@@ -12,15 +16,25 @@ class Spaceship {
     this.bulletSys = new BulletSystem();
     this.size = 50;
     this.collisionRadius = this.size/2
+
+    this.thrusterRight = false;
+    this.thrusterLeft = false;
+    this.thrusterUp = false;
+    this.thrusterDown = false;
+
+    this.emitterSmoke.reset()
   }
 
 
   run(){
+    // Runs the spaceship
     this.bulletSys.run();
     this.draw();
     this.move();
     this.edges();
     this.interaction();
+    this.drawThrusters();
+    this.emitterSmoke.run()
   }
 
   draw(){
@@ -88,9 +102,54 @@ class Spaceship {
     this.drawAirResistanceVector(airResistance)
   }
 
+  drawThrusters(){
+    // This function draws the thrusters - it uses the particle system to draw it
+    if (this.thrusterRight==true){
+        this.emitterSmoke.addParticle(this.location.x,this.location.y, this.velocity.x-10,0); 
+      }
+      if (this.thrusterLeft==true){
+        this.emitterSmoke.addParticle(this.location.x,this.location.y, this.velocity.x+10,0); 
+      }
+      if (this.thrusterUp==true){
+        this.emitterSmoke.addParticle(this.location.x,this.location.y, 0,this.velocity.y+10); 
+      }
+      if (this.thrusterDown==true){
+        this.emitterSmoke.addParticle(this.location.x,this.location.y, 0,this.velocity.y-10); 
+      } 
+  }
 
-  
-  
+  keyPressed(){
+    if (keyCode === RIGHT_ARROW){
+      this.thrusterRight = true;
+    }
+    if (keyCode === LEFT_ARROW){ 
+      this.thrusterLeft = true;
+    }
+    if (keyCode === UP_ARROW){
+      this.thrusterUp = true;
+    }
+    if (keyCode === DOWN_ARROW){
+      this.thrusterDown = true;
+    }
+  }
+
+  keyReleased(){ 
+    if (keyCode === RIGHT_ARROW){
+      this.thrusterRight = false;
+    }
+    if (keyCode === LEFT_ARROW){
+      this.thrusterLeft = false;
+    }
+    if (keyCode === UP_ARROW){
+      this.thrusterUp = false;
+    }
+    if (keyCode === DOWN_ARROW){
+      this.thrusterDown = false;
+    }
+
+  }
+
+
   //// MY FUNCITONS FOR DRAWING VECTORS ////
   drawGravityVector(dir){
     push()
@@ -109,6 +168,11 @@ class Spaceship {
     line(0,0,airResistance.x*300,airResistance.y*300)
     pop()
   }
+
+  // NEW METHODS
+  
+
+ 
 
   /// MY TESTERS !!!////
   shipCollisionCircle()

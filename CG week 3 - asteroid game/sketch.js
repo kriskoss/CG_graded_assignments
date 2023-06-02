@@ -1,11 +1,4 @@
 
-  // import p5 from "../../../../../../../../../Users/krzys/.vscode/extensions/samplavigne.p5-vscode-1.2.13/p5types/index"
-  
-// ts-check
-// <reference path=“../../node_modules/@types/p5/global.d.ts” />
-// <reference path=“../../node_modules/matter-js/build/matter.d.ts” />
-  
-
 var spaceship;
 var asteroids;
 var atmosphereLoc;
@@ -13,25 +6,21 @@ var atmosphereSize;
 var earthLoc;
 var earthSize;
 var starLocs = [];
-var running = true
+var running = true  // Indciaes if the game is running
 
 
 //////////////////////////////////////////////////
 function setup() {
   createCanvas(1200,800);
+  
   spaceship = new Spaceship();
   asteroids = new AsteroidSystem();
-
-
+  
   //location and size of earth and its atmosphere
   atmosphereLoc = new createVector(width/2, height*2.9);
   atmosphereSize = new createVector(width*3, width*3);
   earthLoc = new createVector(width/2, height*3.1);
   earthSize = new createVector(width*3, width*3);
-
-  // FOR TESTING ONLY!!
-  c1 = createVector(300,300)
-  c2 = createVector(mouseX, mouseY)
 }
 
 //////////////////////////////////////////////////
@@ -41,21 +30,21 @@ function draw() {
   
   spaceship.run();
   asteroids.run();
-
+  
   drawEarth();
 
   checkCollisions(spaceship, asteroids); // function that checks collision between various elements
-  
-  
 }
 
 //////////////////////////////////////////////////
 //draws earth and atmosphere
 function drawEarth(){
   noStroke();
+  
   //draw atmosphere
   fill(0,0,255, 50);
   ellipse(atmosphereLoc.x, atmosphereLoc.y, atmosphereSize.x,  atmosphereSize.y);
+  
   //draw earth
   fill(100,255);
   ellipse(earthLoc.x, earthLoc.y, earthSize.x, earthSize.y);
@@ -130,20 +119,6 @@ function isInside(locA, sizeA, locB, sizeB){
 
 
 //////////////////////////////////////////////////
-function keyPressed(){
-  if (keyIsPressed && keyCode === 32){ // if spacebar is pressed, fire!
-    spaceship.fire();
-  }
-
-  if (keyPressed){
-    // Restarts game when gameOver was called earlier
-    if (running== false){
-      restartGame()
-    }
-  }
-}
-
-//////////////////////////////////////////////////
 // function that ends the game by stopping the loops and displaying "Game Over"
 function gameOver(){
   fill(255);
@@ -177,6 +152,34 @@ function sky(){
 
   if (random(1)<0.3) starLocs.splice(int(random(starLocs.length)),1);
   pop();
+}
+
+////////////////////////////////////////////////////////////////////////
+//////////////////////////
+function keyPressed(){
+  // THRUSERT ON
+  spaceship.keyPressed() 
+}
+
+function keyReleased(){
+  // THRUSTER OFF
+  spaceship.keyReleased()  
+  
+  // FIRE BULLET
+  if (keyIsPressed && keyCode === 32){ // if spacebar is pressed, fire!
+    spaceship.fire();
+  }
+  
+  // RESET GAME WHEN GAME OVER
+  if (keyPressed){
+    // Restarts game when gameOver was called earlier
+    if (running== false){
+      restartGame()
+    }
+  }
+  
+  
+  
 }
 
 

@@ -30,7 +30,7 @@ class AsteroidSystem {
       this.accelerations.push(new createVector(0,random(0.1,1)));
       this.velocities.push(new createVector(0, 0));
       this.locations.push(new createVector(random(width), 0));
-      this.diams.push(random(30,50));
+      this.diams.push(random(45,80));
       
       let astColor = [random(255),random(255),random(255)]
       this.colours.push(astColor)

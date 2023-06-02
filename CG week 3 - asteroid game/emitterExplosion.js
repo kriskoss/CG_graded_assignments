@@ -6,20 +6,19 @@ class EmitterExplosion extends Emitter{
     
     explode(locX,locY, velocityX,velocityY, astColor, j,bulletSys){ //OVERRIDE
         console.log("EXPLODE")
-        // Adds multiple particles
         
-        // bullet = spaceship.bulletSys.bullets[bulletIndex]
-        console.log(bulletSys.bullets[j].x, bulletSys.bullets[j].y, bulletSys.velocity.x, bulletSys.velocity.y)
+        //// NEW VECTORS
+        let bulletVelocity = createVector(bulletSys.velocity.x, bulletSys.velocity.y) // bullet velocity
+        let offset = createVector(bulletSys.bullets[j].x-locX, bulletSys.bullets[j].y-locY) // offset vector  from bullet to asteroid
+        let astVelocity = createVector(velocityX, velocityY) // asteroid velocity
+        
+        // Add all vectors together
+        let newParticleVelocit = p5.Vector.add(bulletVelocity, offset, astVelocity)
+        
         for (var i=0; i< 200;i++){
-            // Adds randomness to the location and velocity
-            let vec = createVector(velocityX, velocityY)
-            vec.rotate(random(0,360))
-            velocityX = vec.x
-            velocityY = vec.y
-            var vX= velocityX+random(-10,10)
-            var vY= velocityY*(-1.2)+random(-10,10)
-            
-            
+            // Create new particle with velocity based on bullet and asteroid velocity and offset at the time of collision
+            var vX= velocityX+random(-5,5) - newParticleVelocit.x*random(0.1,0.5)
+            var vY= velocityY+random(-5,5) - newParticleVelocit.y*random(0.02,0.04)
 
             this.particles.push(new ParticleExplosion(locX,locY,vX,vY, astColor))
         }

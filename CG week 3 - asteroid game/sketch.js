@@ -159,6 +159,10 @@ function sky(){
 function keyPressed(){
   // THRUSERT ON
   spaceship.keyPressed() 
+  
+  if (keyIsPressed && keyCode === 32){ // if spacebar is pressed, fire!
+    spaceship.fire();
+  }
 }
 
 function keyReleased(){
@@ -166,9 +170,7 @@ function keyReleased(){
   spaceship.keyReleased()  
   
   // FIRE BULLET
-  if (keyIsPressed && keyCode === 32){ // if spacebar is pressed, fire!
-    spaceship.fire();
-  }
+  
   
   // RESET GAME WHEN GAME OVER
   if (keyPressed){

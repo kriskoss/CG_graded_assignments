@@ -2,6 +2,7 @@ class AsteroidSystem {
 
   //creates arrays to store each asteroid's data
   constructor(){
+    
     this.reset()
   }
   reset(){
@@ -9,11 +10,18 @@ class AsteroidSystem {
     this.velocities = [];
     this.accelerations = [];
     this.diams = [];
+    this.explosions =[]
+    this.runingExplosions = []
+
+    this.colours =[]
+    
   }
   run(){
       this.spawn();
       this.move();
       this.draw();
+      
+      
   }
 
   // spawns asteroid at random intervals
@@ -23,6 +31,11 @@ class AsteroidSystem {
       this.velocities.push(new createVector(0, 0));
       this.locations.push(new createVector(random(width), 0));
       this.diams.push(random(30,50));
+      
+      let astColor = [random(255),random(255),random(255)]
+      this.colours.push(astColor)
+
+      this.explosions.push(new EmitterExplosion())
     }
   }
 
@@ -46,8 +59,17 @@ class AsteroidSystem {
     noStroke();
     fill(200);
     for (var i=0; i<this.locations.length; i++){
+      push()
+      fill(this.colours[i][0]/2,this.colours[i][1]/2,this.colours[i][2]/2)
       ellipse(this.locations[i].x, this.locations[i].y, this.diams[i], this.diams[i]);
+      pop()
     }
+    console.log(this.runingExplosions.length)
+    for (var i = 0; i<this.runingExplosions.length; i++){ 
+      
+      this.runingExplosions[i].run()
+    }
+
   }
 
   //function that calculates effect of gravity on each asteroid and accelerates it
@@ -62,9 +84,24 @@ class AsteroidSystem {
 
   //destroys all data associated with each asteroid
   destroy(index){
+    
+    this.explosions[index].explode(this.locations[index].x,this.locations[index].y,this.velocities[index].x,this.velocities[index].y, this.colours[index])
+    this.runingExplosions.push(this.explosions[index])
+    this.explosions.splice(index,1)
+
     this.locations.splice(index,1);
     this.velocities.splice(index,1);
     this.accelerations.splice(index,1);
     this.diams.splice(index,1);
+    this.colours.splice(index,1);
+    
+    
+    
+    
+
+  }
+
+  drawExplosion(){
+    this.emitterExplosion.explode(asteroids.locations[0].x,asteroids.locations[0].y,0,0)
   }
 }

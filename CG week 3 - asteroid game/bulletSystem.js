@@ -13,7 +13,10 @@ class BulletSystem {
   }
 
   fire(x, y){
-    this.bullets.push(createVector(x,y));
+    if (this.bullets.length < 5) // limit the number of bullets
+    {
+      this.bullets.push(createVector(x,y));
+    }
   }
 
   //draws all bullets

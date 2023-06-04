@@ -79,15 +79,25 @@ class Spaceship {
   }
 
   edges(){
-    if (this.location.x<0) this.location.x=width;
-    else if (this.location.x>width) this.location.x = 0;
+    if (this.location.x<0) {
+      this.velocity.x *= random(-0.8,-1); 
+      this.location.x = 3;
+      this.velocity.y += random(-2,3);
+      }
+    else if (this.location.x>width) {
+        this.location.x = width-3;
+        this.velocity.x *= random(-0.8,-1);
+        this.velocity.y += random(-2,3);
+      }
     else if (this.location.y<0) this.location.y = height;
     else if (this.location.y>height) this.location.y = 0;
+    // if (this.location.x<0) this.location.x=width;
+    // else if (this.location.x>width) this.location.x = 0;
+    // else if (this.location.y<0) this.location.y = height;
+    // else if (this.location.y>height) this.location.y = 0;
   }
 
   setNearEarth(earthLoc){
-    console.log("NEAR EARTH!!!")
-  
     // var gravity= createVector(0,0.05)
     var gravity = p5.Vector.sub(earthLoc, this.location).normalize().mult(0.05)
     var dir = gravity.copy().mult(20)  // dir is used to draw gravity vector

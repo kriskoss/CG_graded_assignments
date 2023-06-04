@@ -7,6 +7,7 @@ var earthLoc;
 var earthSize;
 var starLocs = [];
 var running = true  // Indciaes if the game is running
+var stratosphere = 1.15
 
 
 //////////////////////////////////////////////////
@@ -44,6 +45,9 @@ function drawEarth(){
   //draw atmosphere
   fill(0,0,255, 50);
   ellipse(atmosphereLoc.x, atmosphereLoc.y, atmosphereSize.x,  atmosphereSize.y);
+  
+  fill(0,0,255, 35);
+  ellipse(atmosphereLoc.x, atmosphereLoc.y, atmosphereSize.x*stratosphere,  atmosphereSize.y*stratosphere);
   
   //draw earth
   fill(100,255);
@@ -90,6 +94,16 @@ function checkCollisions(spaceship, asteroids){
   spaceship.setNearEarth(earthLoc)
   }
 
+  // asteroid-2-atmosphere
+  for (var i=0; i<asteroids.diams.length;i++){
+    if (isInside(asteroids.locations[i],
+          asteroids.diams[i],
+          atmosphereLoc, 
+          atmosphereSize.x*stratosphere,)
+      ){
+    asteroids.burn(i)
+    }
+  }
   //bullet collisions
   bulletNum = spaceship.bulletSys.getBulletsNum()
     for (var i=0; i<asteroids.diams.length;i++){
@@ -126,9 +140,12 @@ function gameOver(){
   fill(255);
   textSize(80);
   textAlign(CENTER);
-  text("GAME OVER\n press any key to restart", width/2, height/2)
+  text("GAME OVER\n press ENTER to restart", width/2, height/2)
   running = false
+  
+  
   noLoop();
+  
 }
 
 // Resets spaceship, bullets and asteroids. Reinitiates the draw function loop
@@ -175,7 +192,7 @@ function keyReleased(){
   
   
   // RESET GAME WHEN GAME OVER
-  if (keyPressed){
+  if (keyCode == ENTER){
     // Restarts game when gameOver was called earlier
     if (running== false){
       restartGame()

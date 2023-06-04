@@ -1,6 +1,7 @@
 class EmitterSmoke extends Emitter{
     constructor(){
         super()
+
     }
 
     addParticle(locX,locY,velocityX,velocityY){ //OVERRIDE
@@ -17,6 +18,15 @@ class EmitterSmoke extends Emitter{
         
         
     }
+
+    burn(index){
+        this.colours[index] = [255,50,50]
+        this.burinigEmitter[index].addParticle(this.locations[index].x+random(-this.diams[index]/2, 
+                                            this.diams[index]/2),
+                                            this.locations[index].y)
+      }
+
+      
 
     
 }

@@ -12,9 +12,15 @@ class AsteroidSystem {
     this.diams = [];
     this.explosions =[]
     this.runingExplosions = []
-
+    this.burinigEmitter = []
     this.colours =[]
+    this.score = 0
     
+    this.numBurnParcicles = 0
+    this.numExplosionParticles = 0
+
+    this.isBurning = []
+
   }
   run(){
       this.spawn();
@@ -26,7 +32,7 @@ class AsteroidSystem {
 
   // spawns asteroid at random intervals
   spawn(){
-    if (random(1)<0.01){
+    if (random(1)<(0.005+0.0003*this.score)){
       this.accelerations.push(new createVector(0,random(0.1,1)));
       this.velocities.push(new createVector(0, 0));
       this.locations.push(new createVector(random(width), 0));
@@ -35,7 +41,11 @@ class AsteroidSystem {
       let astColor = [random(255),random(255),random(255)]
       this.colours.push(astColor)
 
+      
       this.explosions.push(new EmitterExplosion())
+      this.burinigEmitter.push(new EmitterBurn)
+      
+      this.isBurning.push(false)
     }
   }
 
@@ -65,11 +75,19 @@ class AsteroidSystem {
       pop()
     }
     
-    for (var i = 0; i<this.runingExplosions.length; i++){ 
-      
+    for (var i = 0; i<this.runingExplosions.length; i++)
+    { 
       this.runingExplosions[i].run()
     }
 
+    for  (var i=0; i<this.burinigEmitter.length; i++)
+    {
+      this.burinigEmitter[i].run()
+    }
+
+    // this.countBurningParicles()
+    this.countExplosionParticles()
+    this.coutnScore()
   }
 
   //function that calculates effect of gravity on each asteroid and accelerates it
@@ -91,7 +109,9 @@ class AsteroidSystem {
       this.velocities[index].y, 
       this.colours[index],
       bulletIndex,
-      bulletSys)
+      bulletSys,
+      this.isBurning[index],
+      this.numExplosionParticles)
     this.runingExplosions.push(this.explosions[index])
     this.explosions.splice(index,1)
 
@@ -100,14 +120,54 @@ class AsteroidSystem {
     this.accelerations.splice(index,1);
     this.diams.splice(index,1);
     this.colours.splice(index,1);
+    this.burinigEmitter.splice(index,1)
+    this.isBurning.splice(index,1)
     
-    
-    
-    
-
+    this.score += 1
   }
 
-  drawExplosion(){
-    this.emitterExplosion.explode(asteroids.locations[0].x,asteroids.locations[0].y,0,0)
+
+  burn(index){
+    this.isBurning[index] = true
+    this.colours[index] = [255,50,50]
+    
+    if (frameCount%(2+int(this.numBurnParcicles/60))==0){ //reduce number of particles if there are too many asteroids burning for performance
+      this.burinigEmitter[index].addParticle(this.locations[index].x+random(-this.diams[index]/2, 
+                                          this.diams[index]/2),
+                                          this.locations[index].y,
+                                          random(-2,2),0)}
   }
+  countExplosionParticles(){ //counts number of explosion particles
+    if (frameCount%5==0){
+      let particles = 0
+      this.runingExplosions.forEach(function(EmitterExplosion){
+        particles += EmitterExplosion.particles.length
+      })
+      this.numExplosionParticles= particles
+      
+    }
+  }
+   
+  countBurningParicles(){ //counts number of burning particles
+    if (frameCount%5==0){
+      let particles = 0
+      this.burinigEmitter.forEach(function(EmitterBurn){
+        particles += EmitterBurn.particles.length
+      })
+      this.numBurnParcicles= particles
+      
+    }
+  }
+
+  coutnScore(){
+    fill("orange")
+    textSize(40)
+    // change font to boxy one
+    textFont ("Consolas")
+
+    
+    
+    text("Score: "+this.score, 50, 50)
+  } 
+  
 }

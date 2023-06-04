@@ -57,5 +57,9 @@ class Emitter{
   reset(){
     this.clearParticles()
   }
+
+  
+
+  
 }
   

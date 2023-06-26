@@ -168,6 +168,7 @@ function drawPropeller(){
 function setupBird(){
   // creates a bird
   let bird = Bodies.polygon(mouseX, mouseY, 1, birdSize,{restitution:0.8, friction:0.5});
+  Body.setMass(bird,1)
   // keeps track of the bird object
   birds.push(bird);
   // adds bird to the world
@@ -178,7 +179,10 @@ function setupBird(){
 
 function drawBirds(){
   for (let i=0; i<birds.length; i++){
+    push()
+    fill("red")
     drawVertices(birds[i].vertices);
+    pop()
 
     if (isOffScreen(birds[i])){
       removeFromWorld(birds[i]);
@@ -216,8 +220,37 @@ function drawTower(){
     if (isOffScreen(boxes[i])){
       removeFromWorld(boxes[i])
       boxes.splice(i,1);
+      colors.splice(i,1)
       i--
     }
   }
 }
 
+
+function setupSlingshot(){
+  slingshotBird = Bodies.circle(100,100,30, {friction:0, restitution:0.95})
+  Body.setMass(slingshotBird,10)
+  World.add(engine.world, [slingshotBird])
+  
+  //Initialise also the global variable slingshotConstraint as a constraint that behaves and looks like the one shown above. Give it a stiffness of 0.01 and damping of 0.0001.
+  slingshotConstraint = Constraint.create({
+    bodyA: slingshotBird,
+    pointA:{x:0,y:0},
+    pointB:{x:100,y:100},
+    stiffness: 0.01,
+    damping: 0.0001
+  });
+  World.add(engine.world, [slingshotConstraint])
+
+}
+
+function drawSlingshot(){
+  // Draws Slingshot Bird
+  push()
+  fill("yellow")
+  drawVertices(slingshotBird.vertices)
+  pop()
+  
+  // Draw slingshot constraint
+  drawConstraint(slingshotConstraint)
+}

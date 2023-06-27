@@ -25,6 +25,7 @@ var canvas;
 var maxAngleSpeed = 0.4;
 var birdSize = 20;
 var boxSize = 80
+var slingshotBirdInitPos;
 ////////////////////////////////////////////////////////////
 function setup() {
   canvas = createCanvas(1000, 600);
@@ -228,15 +229,17 @@ function drawTower(){
 
 
 function setupSlingshot(){
-  slingshotBird = Bodies.circle(100,100,30, {friction:0, restitution:0.95})
+  var slingshotBirdInitPos = new createVector(200, 200);
+  var sBirdiPos = slingshotBirdInitPos;
+  slingshotBird = Bodies.circle(sBirdiPos.x,sBirdiPos.y,30, {friction:0, restitution:0.95})
   Body.setMass(slingshotBird,10)
   World.add(engine.world, [slingshotBird])
   
   //Initialise also the global variable slingshotConstraint as a constraint that behaves and looks like the one shown above. Give it a stiffness of 0.01 and damping of 0.0001.
   slingshotConstraint = Constraint.create({
-    bodyA: slingshotBird,
-    pointA:{x:0,y:0},
-    pointB:{x:100,y:100},
+    pointA:{x:sBirdiPos.x,y:sBirdiPos.y},
+    bodyB: slingshotBird,
+    pointB:{x:0,y:0},
     stiffness: 0.01,
     damping: 0.0001
   });
@@ -250,7 +253,7 @@ function drawSlingshot(){
   fill("yellow")
   drawVertices(slingshotBird.vertices)
   pop()
-  
+
   // Draw slingshot constraint
   drawConstraint(slingshotConstraint)
 }

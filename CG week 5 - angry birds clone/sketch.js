@@ -205,7 +205,9 @@ function drawTower(){
   // Loops through the individual boxes of the tower and draws them
   for (let i=0;i<boxes.length;i++){
     push();
+    
     fill(color(colors[i]));
+    
     drawVertices(boxes[i].vertices);
     pop();
 
@@ -275,7 +277,7 @@ function drawScore(){
   let towerBoxes = boxes.filter(box => box.label == "towerBox");
   let smallBoxes = boxes.filter(box => box.label == "smallBox");
   let dusts = boxes.filter(box => box.label == "dust");
-  text("TowerBoxes: " +towerBoxes.length + ", SmallBoxes: "+smallBoxes.length + ", Dust: "+dusts.length,270, 30);
+  text("REMAINING: TowerBoxes: " +towerBoxes.length + ", SmallBoxes: "+smallBoxes.length + ", Dust: "+dusts.length,270, 30);
   pop()
 }
 
@@ -325,11 +327,23 @@ class birdBoxCollisionDetector{
         
           // Remove the original body from the world
           Matter.World.remove(engine.world, bodyA); 
+          // Storing the color of the destroyed box
+          let index = boxes.indexOf(bodyA)
+          let destroyedBoxColor = color("yellow")
           
+          // Color is stored if body is in the boxex array
+          if (index != -1){ 
+            destroyedBoxColor = color(colors[index])
+          }
+          else{
+            console.log("error - no color found")
+          }
+      
           self.removeFromBoxes(bodyA)
+          
           score++;
           if (bodyA.label != "dust"){
-            self.replaceWithStack(bodyA)
+            self.replaceWithStack(bodyA, destroyedBoxColor)
           };
         };
       };
@@ -348,21 +362,18 @@ class birdBoxCollisionDetector{
     /// Check if body hit by a bird should split
     if (bodyB.label == "slingshotBird" || bodyB.label == "bird"){
       if (bodyA.label =="towerBox"){ // tower box hit by bird
-        if (self.checkSpeedThreshold(bodyA,bodyB,25)){
-          console.log("TOWER BOX" + bodyA.id + "SPLIT!");
+        if (self.checkSpeedThreshold(bodyA,bodyB,15)){
           return true;
         }
       }
       /// Chcks if small box hit by bird should split
       else if(bodyA.label =="smallBox"){ // small box hit by bird
-        if (self.checkSpeedThreshold(bodyA,bodyB,15)){
-          console.log("SMAlL BOX" + bodyA.id + "SPLIT!");
+        if (self.checkSpeedThreshold(bodyA,bodyB,10)){
           return true;
         }
       }
       else if(bodyA.label =="dust"){ // dust hit by bird
         if (self.checkSpeedThreshold(bodyA,bodyB,5)){
-          console.log("DUST" + bodyA.id + "destroy!");
           return true;
         }
       }
@@ -380,18 +391,26 @@ class birdBoxCollisionDetector{
       boxes.splice(index, 1); // removes box from the boxes array
       colors.splice(index, 1); // removes colour from the colours array
     }
+
+    return index;
   }
 
-  replaceWithStack(originalBox) {
+  replaceWithStack(originalBox, destroyedBoxColor) {
     // Get the position and velocity of the original box
     let position = originalBox.position;
     let velocity = originalBox.velocity;
     let angularVelocity = originalBox.angularVelocity;
-
+    
     // Remove the original box from the world
+    let newColor  = color("gray")
+    
+    if (destroyedBoxColor){
+      newColor = destroyedBoxColor;  
+    }
+            
     Matter.World.remove(engine.world, originalBox);
     self.removeFromBoxes(originalBox);
-
+    
     // Create a stack of rectangles
     
     let stackWidth = 3; // Width of the stack (number of rectangles)
@@ -428,8 +447,19 @@ class birdBoxCollisionDetector{
     });
 
     // Update the boxes and colors arrays with the new rectangles
+    
     boxes = boxes.concat(stack);
-    colors = colors.concat(Array(stack.length).fill(boxColor));
+    
+    // Assigning unique collor for each stack of "dust" boxes
+    // let newColor = color(random(100,150),random(100,150),20);
+    if (originalBox.label == "smallBox"){
+      newColor = color(random(100,200), 50,70)
+    }
+    
+    colors = colors.concat(Array(stack.length).fill(newColor));
+    
+    
+    
   }
 }
 

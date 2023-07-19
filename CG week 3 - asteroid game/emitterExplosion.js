@@ -1,3 +1,5 @@
+///////////// emitterExplosion.js //////////////
+
 class EmitterExplosion extends Emitter{
     constructor(astColor){
         super()

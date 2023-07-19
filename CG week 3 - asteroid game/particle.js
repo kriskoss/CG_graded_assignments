@@ -1,3 +1,5 @@
+///// particle.js /////////
+
 class Particle {
 
     constructor(locX,locY){

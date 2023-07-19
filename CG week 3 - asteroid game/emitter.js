@@ -1,3 +1,5 @@
+//////////emitter.js//////////////
+
 class Emitter{
   // Class based on the particle system introduced in the WEEK 3 lecture
   

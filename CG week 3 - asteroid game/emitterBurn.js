@@ -1,3 +1,5 @@
+//////////////// emitterBurn.js //////////////////
+
 class EmitterBurn extends Emitter{
     constructor(){
         super()

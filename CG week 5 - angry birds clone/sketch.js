@@ -1,6 +1,8 @@
 // Example is based on examples from: http://brm.io/matter-js/, https://github.com/shiffman/p5-matter
 // add also Benedict Gross credit
 
+
+// MY CODE - original code was modified and spread into different functions. Except that original code in the helper area at the bottom, all code is mine
 var Engine = Matter.Engine;
 var Render = Matter.Render;
 var World = Matter.World;

@@ -1,3 +1,4 @@
+//// asteroidSystem.js/////////
 class AsteroidSystem {
 
   //creates arrays to store each asteroid's data

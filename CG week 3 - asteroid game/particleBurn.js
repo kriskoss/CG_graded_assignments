@@ -1,3 +1,5 @@
+////// /particleBurn.js//////
+
 class ParticleBurn extends Particle{
   // Modifies the base class for the smoke particles
   

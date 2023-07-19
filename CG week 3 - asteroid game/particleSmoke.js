@@ -1,3 +1,4 @@
+///// particleSmoke.js
 class ParticleSmoke extends Particle{
   // Modifies the base class for the smoke particles
   

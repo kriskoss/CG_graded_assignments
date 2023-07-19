@@ -1,3 +1,5 @@
+/////////// emitterSmoke.js ///////////////
+
 class EmitterSmoke extends Emitter{
     constructor(){
         super()

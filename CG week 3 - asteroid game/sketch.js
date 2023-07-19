@@ -1,4 +1,5 @@
-
+//#########################################################################################
+// sketch.js 
 var spaceship;
 var asteroids;
 var atmosphereLoc;
@@ -9,6 +10,7 @@ var starLocs = [];
 var running = true  // Indciaes if the game is running
 var stratosphere = 1.15
 
+/// I modified code very much. I created paricle systems and emitter for them. All of this codr is created based on my previous experience. There may remain some of the original code however it is also modified where it was necessary. 
 
 //////////////////////////////////////////////////
 function setup() {

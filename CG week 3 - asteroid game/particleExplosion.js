@@ -1,3 +1,5 @@
+//// particleExplosion.js //////
+
 class ParticleExplosion extends Particle{
     constructor(locX,locY,velocityX,velocityY, astColor){
         super(locX,locY,velocityX,velocityY)

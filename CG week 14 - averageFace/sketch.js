@@ -5,8 +5,10 @@ var numOfImages = 30;
 // My variables
 var img
 var averageFace;
-let canvasWidth;
-let canvasHeight;
+var canvasWidth;
+var canvasHeight;
+var transitImg;
+var timeout;
     
 //////////////////////////////////////////////////////////
 function preload() { // preload() runs once
@@ -29,7 +31,7 @@ function setup() {
     
     
     noStroke()
-    averageFace = new AverageFace;
+    
     
     canvasWidth = imgs[0].width*2
     canvasHeight = imgs[0].height
@@ -37,48 +39,49 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight );
     pixelDensity(1);
 
-    avgImg = createGraphics(canvasWidth,canvasHeight)
+    avgImg = createGraphics(canvasWidth/2,canvasHeight)
+    transitImg = createGraphics(canvasWidth/2,canvasHeight)
+
+    averageFace = new AverageFace();
 
 }
 //////////////////////////////////////////////////////////
 function draw() {
     background(125);
-    
-    // averageFace.drawAllImages()
-    averageFace.drawFirstImage()
-    
-    
     // LOADING PIXELS
-    avgImg.loadPixels()
-    averageFace.loadPixelsOfAllImags()
-    // averageFace.getFirsImagesPixels()    
+    averageFace.loadPixelsOfAllImagsAndAvgImg()
         
-    averageFace.drawFirstImagePixels()
-
-    console.log("END LOOP")
+    // LEFT IMAGE
+    averageFace.drawRandomImage()
+    
+    // UPDATING PIXELS
+    averageFace.updateAvgImgForAverageOfAllImages()
+    
+    // RIGHT IMAGE
+    averageFace.drawRightImage()
+    
     noLoop()
 }
 
 
 
-
 /////////// MY CODE ////////////////////
+function keyPressed(){
+    averageFace.keyPressedHandler()
+}
+
+function mouseMoved(){
+    averageFace.mouseMovedHandler()
+}
+
+
 class AverageFace{
     constructor(){
-        this.firstImage = imgs[0]
-    }
-
-    drawAllImages(){
-        // For testing: draws all preloaded images on the canvas
-        let widthNum = 10
-        let heightNum = 30/widthNum
-        let imgSize = width/widthNum
-        for (let i =0; i<heightNum;i++){
-            for (let j=0; j<widthNum;j++){
-                
-                image(imgs[i*heightNum+j],j*imgSize,i*imgSize,imgSize,imgSize)
-            }
-        }
+        this.firstImage = imgs[0]   
+        this.currentImgIndex = int(random(0,imgs.length-1)) // Random image index
+        this.transition = 100 // Range 0-100, indicates transition between LEFT and RIGHT IMAGE
+        this.newImageLoaded = true
+        this.readyToDrawAllImages = false
     }
 
     drawFirstImage(){
@@ -86,55 +89,154 @@ class AverageFace{
         image(this.firstImage,0,0,this.firstImage.width, this.firstImage.height)
     }
 
-
-    /// DELETE THIS !!!! /////
-    getFirsImagesPixels(){
-        this.firstImage.loadPixels()
-        let imgLength = this.firstImage.pixels.length
-        for (let i=0;i<imgLength;i++){
-            
-            if (i==imgLength-1){
-                console.log("this is it" + str(imgLength))
-                console.log(this.firstImage.pixels[i])
-            }
-        }
-    
+    drawRandomImage(){
+        let currentImg = imgs[this.currentImgIndex]
+        image(currentImg,0,0,currentImg.width,currentImg.height)
     }
 
-    loadPixelsOfAllImags(){
+    loadPixelsOfAllImagsAndAvgImg(){
+        avgImg.loadPixels()
+        transitImg.loadPixels();
+        
         for (let i=0;i<imgs.length;i++){
             imgs[i].loadPixels()
         }
-        console.log("---imgs pixels loaded---")
-        // Checks if the pixels are loaded into memory by checking the pixels length for each image after loadPixels function used
-        
-        // for (let i=0;i<imgs.length;i++){
-        //     console.log(`img${i}.len = ${imgs[0].pixels.length} `)
-        // }
-        
     }
 
-    drawFirstImagePixels(){
-        /*Step 5: Create a nested for-loop looping over all pixels on the first image in the array. Convert the x and y coordinates from the for-loop to a pixel index value and use that value to set the corresponding pixel in the avgImg to red.
-
-        After exiting the nested for loop, update the pixels of the avgImg to let p5js know that the image has had its data changed, and draw the avgImg to the right of the existing image. If you’ve done things right, the left side of the canvas should have the face of the first image in the array and the right side should be bright red.
-
-        Also add a noLoop() at the end of the draw() function as the calculations we are about to do are intense and we only really need to do them once. No need for looping. */
-        console.log(this.firstImage.width,this.firstImage.height)
-        for (let y=0;y<this.firstImage.height;y++){
-            
-            for (let x=0;x<this.firstImage.width;x++){
-                let index = ((y*this.firstImage.width)+x)*4;
-                let R = this.firstImage.pixels[index+0];
-                let G = this.firstImage.pixels[index+1];
-                let B = this.firstImage.pixels[index+2];
-                let A = this.firstImage.pixels[index+3];
-                push()
-                    fill(R,G,B)
-                    rect(x+canvasWidth/2,y,1,1)
-                pop()
+    updateAvgImgForAverageOfAllImages(){
+        for (let y=0;y<this.firstImage.height;y++){     // Moving along y-axis
+            for (let x=0;x<this.firstImage.width;x++){  // Moving along x-axis
+                let index = ((y*this.firstImage.width)+x)*4; // Index of the current pixel
                 
+                ///// Calculating average value for each pixel in avgImg from all images
+                
+                let sumR =0
+                let sumG =0
+                let sumB =0
+                let sumA =0
+                
+
+                for (let i=0;i<imgs.length;i++){        // Iterating through all of the images
+                    sumR += imgs[i].pixels[index+0];        // Red
+                    sumG += imgs[i].pixels[index+1];        // Green
+                    sumB += imgs[i].pixels[index+2];        // Blue
+                    sumA += imgs[i].pixels[index+3];        // Alpha
+                }   
+                // Calculating averages for each pixel
+                let avgR  = sumR/imgs.length
+                let avgG  = sumG/imgs.length
+                let avgB  = sumB/imgs.length
+                let avgA  = sumA/imgs.length
+
+                //// Updating avgImg pixels
+                avgImg.pixels[index] = avgR 
+                avgImg.pixels[index+1] = avgG 
+                avgImg.pixels[index+2] = avgB 
+                avgImg.pixels[index+3] = avgA 
             }
         }
+        
+        avgImg.updatePixels()
+    }
+
+    drawRightImage(){
+        if (this.newImageLoaded){ // Loads avgImg if mouse haven't been moved since the program started
+            this.newImageLoaded=false
+            image(avgImg,canvasWidth/2,0, avgImg.width,avgImg.height)
+            
+            /// Show instructions 
+            this.#drawInstructions()
+            
+            
+        }
+        else if(this.readyToDrawAllImages){
+            this.#drawAllImages()
+            this.readyToDrawAllImages = false
+
+        }
+        else{ // Whenever the mouse was moved the transitImg is drawn
+            image(transitImg,canvasWidth/2,0,canvasWidth/2,height)
+        }
+    }
+
+
+
+    /// PRIVATE METHODS ///////////////////////////////////////
+    #updateRandomImageIndex(){
+        this.currentImgIndex = int(random(0,imgs.length-1))
+        console.log(`Displaying image ${this.currentImgIndex}`)
+        loop()
+    }
+    
+    #transitBetweenLeftAndRightImage(){
+        let mT = map(mouseX,0,width,0,1)
+        this.transition = constrain(mT, 0, 1)
+        
+        for (let y=0;y<this.firstImage.height;y++){             // Moving along y-axis
+            for (let x=0;x<this.firstImage.width;x++){          // Moving along x-axis
+                let pixelIndex= ((y*this.firstImage.width)+x)*4;    // Index of the current pixel
+                // Iteraing through pixel
+                for(let i=0;i<4;i++){
+                    let left = imgs[this.currentImgIndex].pixels[pixelIndex+i]
+                    let right = avgImg.pixels[pixelIndex+i]
+                    
+                    let lerpVal = lerp(left,right, this.transition)
+                    transitImg.pixels[pixelIndex+i] = lerpVal
+                }
+            }
+        }
+        transitImg.updatePixels()
+        this.newImageLoaded = false
+        loop()
+    }
+
+    #drawInstructions(){
+        push()
+            stroke(255)
+            strokeWeight(this.firstImage.width/100)
+            textSize(this.firstImage.width/13)
+            text("- Press 'A' to see all images. \n- Move the mouse left or right (within the canvas area)\n  to see the transition.\n- Press any key to change the image", 50, 50,)
+        pop()
+    }
+
+    #drawAllImages(){
+        // Draws all images instead of one
+        let widthNum = 10
+        let heightNum = 30/widthNum
+        let imgSize = width/widthNum
+        
+        background(125)
+        for (let i =0; i<heightNum;i++){
+            for (let j=0; j<widthNum;j++){
+                image(imgs[i*heightNum+j],j*imgSize,i*imgSize,imgSize,imgSize)
+            }
+        }
+    }
+
+
+    /// EVENT HANDLERS ///////////////////////////////////////////
+    keyPressedHandler(){
+        if (keyPressed && (key === "A" || key==="a")){
+            this.readyToDrawAllImages = true
+            loop()
+        }
+        else if (keyPressed){
+            this.#updateRandomImageIndex()
+            this.#transitBetweenLeftAndRightImage()
+            // this.drawAvgImg();
+        } 
+    }
+    mouseMovedHandler(){
+        
+        // The RIGHT image is redrawn only every 30th pixel crossed by the mouse or after 300 ms after mouse stopped moving
+        if (mouseMoved && mouseX%20==0){ // Every 30th pixel block
+            this.#transitBetweenLeftAndRightImage()
+        }
+        else{// Time out block
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { this.#transitBetweenLeftAndRightImage(); }, 300); 
+                // REFERENCE https://developer.mozilla.org/en-US/docs/Web/API/setTimeout
+        }
+        
     }
 }

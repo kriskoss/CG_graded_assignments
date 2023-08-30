@@ -26,7 +26,7 @@ function draw() {
     background(125);
     image(imgIn, 0, 0);
     image(earlyBirdFilter(imgIn), imgIn.width, 0);
-    // noLoop();
+    noLoop();
 }
 /////////////////////////////////////////////////////////////////
 function mousePressed(){
@@ -136,6 +136,7 @@ function radialBlurFilter(img){
           imgOut.pixels[index + 1] = c[1]*dynBlur + g*(1-dynBlur);
           imgOut.pixels[index + 2] = c[2]*dynBlur + b*(1-dynBlur);
           imgOut.pixels[index + 3] = 255;
+          // imgOut.pixels[index + 3] = 255+dynBlur*(-255); // Uncomment to see the area not affected by blur
 
       }
   }

@@ -3,6 +3,7 @@
 var centerX;
 var centerY;
 var imgIn;
+var buffer;
 var matrix = [
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
@@ -19,7 +20,8 @@ function preload() {
 }
 /////////////////////////////////////////////////////////////////
 function setup() {
-    createCanvas((imgIn.width * 2), imgIn.height);
+  createCanvas((imgIn.width * 2), imgIn.height);
+  buffer = createGraphics(imgIn.width, imgIn.height)
 }
 /////////////////////////////////////////////////////////////////
 function draw() {
@@ -42,7 +44,7 @@ function earlyBirdFilter(img){
 
   resultImg = darkCorners(resultImg);
   resultImg = radialBlurFilter(resultImg);
-  // resultImg = borderFilter(resultImg)
+  resultImg = borderFilter(resultImg)
   return resultImg;
 }
 
@@ -165,4 +167,15 @@ function convolution(x, y, matrix, matrixSize, img){
       }
   }
   return [totalRed,totalGreen, totalBlue]
+}
+
+function borderFilter(img){
+  buffer.image(img,0,0)
+  buffer.noFill()
+  buffer.strokeWeight(20)
+  buffer.stroke(255)
+  buffer.rect(0,0,img.width,img.height, 50) // Rounded frame
+  buffer.rect(0,0,img.width,img.height)     // White background to eliminate the black corners
+  
+  return buffer;
 }

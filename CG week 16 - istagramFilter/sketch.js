@@ -4,7 +4,18 @@ var centerX;
 var centerY;
 var imgIn;
 var buffer;
+var buttonBlur;
+var buttonVignetting;
+var buttonBorder;
+var buttonSepia;
+var buttonsState={
+  "sepia": true,
+  "vignetting": true,
+  "blur": true,
+  "border":true
+}
 var matrix = [
+  
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
@@ -14,6 +25,7 @@ var matrix = [
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64],
     [1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64, 1/64]
 ];
+
 /////////////////////////////////////////////////////////////////
 function preload() {
     imgIn = loadImage("assets/husky.jpg");
@@ -22,6 +34,13 @@ function preload() {
 function setup() {
   createCanvas((imgIn.width * 2), imgIn.height);
   buffer = createGraphics(imgIn.width, imgIn.height)
+
+  // Creating instances of myButton
+  buttonBlur = new myButton("blur", 20,40)
+  buttonSepia = new myButton("sepia",20,70);
+  buttonVignetting = new myButton("vignetting",20,100);
+  buttonBorder = new myButton("border",20,130)
+
 }
 /////////////////////////////////////////////////////////////////
 function draw() {
@@ -38,13 +57,29 @@ function mousePressed(){
 function earlyBirdFilter(img){
   var resultImg = createImage(imgIn.width, imgIn.height);
 
-  centerX = floor(img.width/2)
-  centerY = floor(img.height/2)
-  resultImg = sepiaFilter(imgIn);
+  centerX = floor(img.width / 2)
+  centerY = floor(img.height / 2)
+  resultImg = imgIn
 
-  resultImg = darkCorners(resultImg);
-  resultImg = radialBlurFilter(resultImg);
-  resultImg = borderFilter(resultImg)
+  // SEPIA FILTER
+  if (buttonSepia.state) {
+    resultImg = sepiaFilter(imgIn);
+  }
+
+  // VIGNETTING FILTER
+  if (buttonVignetting.state){
+    resultImg = darkCorners(resultImg);
+  }
+  // BLUR FILTER
+  if (buttonBlur.state){
+    resultImg = radialBlurFilter(resultImg);
+  }
+  
+  // BORDER FILTER
+  if (buttonBorder.state){
+    resultImg = borderFilter(resultImg)
+  }
+
   return resultImg;
 }
 
@@ -73,7 +108,6 @@ function sepiaFilter(img){
       imgOut.pixels[index+3] = 255;
     }
   }
-  
   
   imgOut.updatePixels()
   return imgOut
@@ -151,14 +185,14 @@ function convolution(x, y, matrix, matrixSize, img){
   var totalGreen = 0;
   var totalBlue = 0;
 
-  var offset = floor(matrixSize/2); // "Radius" of the kernel - floor to pass the central point
+  var offset = floor(matrixSize/2);
 
   for (var i=0; i<matrixSize;i++){  // 
       for(var j=0; j<matrixSize;j++){
           var xloc = x + i - offset;
           var yloc = y + j - offset;
           var index = (img.width*yloc+xloc)*4; 
-          index = constrain(index, 0, img.pixels.length-1); // We are programming defensively here - want to be sure that the index I am going to look at is actualy in teh image
+          index = constrain(index, 0, img.pixels.length-1);
           
           totalRed  +=img.pixels[index +0] * matrix[i][j]
           totalGreen+=img.pixels[index +1] * matrix[i][j]
@@ -170,7 +204,7 @@ function convolution(x, y, matrix, matrixSize, img){
 }
 
 function borderFilter(img){
-  buffer.image(img,0,0)
+  buffer.image(img,0,0) 
   buffer.noFill()
   buffer.strokeWeight(20)
   buffer.stroke(255)
@@ -178,4 +212,42 @@ function borderFilter(img){
   buffer.rect(0,0,img.width,img.height)     // White background to eliminate the black corners
   
   return buffer;
+}
+
+class myButton{
+  constructor(filterName, posX, posY){
+    this.filterName = filterName
+    this.posX = posX;
+    this.posY = posY;
+
+    this.state = true
+
+    this.colOn = color(25, 223, 50, 50);
+    this.colOff = color(225, 23, 50, 50);
+
+    // Creating button
+    this.btn = createButton(this.filterName)
+    this.btn.position(this.posX, this.posY)
+    
+    // Styling the button
+    this.btn.style('background-color', this.colOn)
+    this.btn.style('font-size', '18px')
+    this.btn.style('border-radius', '5px')
+    
+    // Button mousePressed functionality
+    this.btn.mousePressed(() => {
+      this.changeState(filterName)
+    })
+    
+  }
+  changeState(filterName){
+    this.state = !this.state
+    
+    if (this.state){
+      this.btn.style('background-color', this.colOn)
+    } 
+    else {
+      this.btn.style('background-color', this.colOff)
+    }
+  }
 }

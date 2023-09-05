@@ -37,7 +37,7 @@ function setup() {
 
   // Creating instances of myButton
   buttonBlur = new myButton("blur", 20,40)
-  buttonSepia = new myButton("sepia",20,70);
+  buttonSepia = new myButton();
   buttonVignetting = new myButton("vignetting",20,100);
   buttonBorder = new myButton("border",20,130)
 

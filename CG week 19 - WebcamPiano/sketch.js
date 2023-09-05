@@ -2,10 +2,10 @@ var video;
 var threshold = 20;
 var thresholdSlider;
 var button;
-var backImg;
+var prevImg;
 var currImg;
 var diffImg;
-
+var grid;
 function setup() {
     createCanvas(640*2, 480);
     pixelDensity(1)
@@ -15,6 +15,8 @@ function setup() {
 
     thresholdSlider = createSlider(0, 255, 20)
     thresholdSlider.position(20, 20)
+
+    grid = new Grid(640, 480);
 }
 
 function draw() {
@@ -25,14 +27,20 @@ function draw() {
     currImg.copy(video, 
         0,0, video.width, video.height, 
         0,0, video.width, video.height)
+    
+    let scaleFactor = 2
+    scaleFactor = 8  // FOR TESTING ONLY - due to performace of my local machine
+    currImg.filter(BLUR,3)
+    currImg.resize(currImg.width/scaleFactor, currImg.height/scaleFactor)
 
     diffImg = createImage(video.width, video.height)
+    diffImg.resize(diffImg.width/scaleFactor,diffImg.height/scaleFactor)
     diffImg.loadPixels()
 
     threshold = thresholdSlider.value()
 
-    if (backImg){ // We only perform the loop if the backImg exists
-        backImg.loadPixels()
+    if (prevImg){ // We only perform the loop if the prevImg exists
+        prevImg.loadPixels()
         currImg.loadPixels()
         for (var x = 0; x < video.width; x++) {
             for (var y = 0; y < video.height; y++) {
@@ -43,9 +51,9 @@ function draw() {
                 var greenSource = currImg.pixels[index + 1]
                 var blueSource = currImg.pixels[index + 2]
 
-                var redBack = backImg.pixels[index + 0]
-                var greenBack = backImg.pixels[index + 1]
-                var blueBack = backImg.pixels[index + 2]
+                var redBack = prevImg.pixels[index + 0]
+                var greenBack = prevImg.pixels[index + 1]
+                var blueBack = prevImg.pixels[index + 2]
 
                 var d = dist(redSource, greenSource, blueSource, 
                     redBack, greenBack, blueBack)
@@ -67,17 +75,20 @@ function draw() {
     }
     
     diffImg.updatePixels()
-    image(diffImg, 640, 0)
+    image(diffImg, 640, 0, 640,480)
+
+    // Storing current image to be used as previous frame in the next draw iteration
+    prevImg = createImage(currImg.width, currImg.height)
+    prevImg.copy(currImg,
+        0, 0, currImg.width, currImg.height,
+        0, 0, currImg.width, currImg.height)
+
+    grid.run(diffImg)
 }
+
 
 function keyPressed() {
     if (key == " ") {
-        backImg = createImage(currImg.width, currImg.height)
-
-        // Copying what is in the current image to the background image
-        backImg.copy(currImg,
-            0, 0, currImg.width, currImg.height,
-            0, 0, currImg.width, currImg.height)
-        console.log("UPdated background")
+        
     }
 }

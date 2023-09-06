@@ -6,8 +6,15 @@ var prevImg;
 var currImg;
 var diffImg;
 var grid;
+
+// MY CODE 
+// All modifications to my code were implemented in the Grid.js file. The only modification in this file is the scale factor below.
+// Additionally, I had to download newer versions of the p5.sound and p5.sound.min files, as the older versions contained a bug that prevented sound from being generated correctly.
+
+var vScale = 1 // Using scale to reduce the size of the video due to performance of my machine = for debugging only
+
 function setup() {
-    createCanvas(640*2, 480);
+    createCanvas(640*2*vScale, 480*vScale);
     pixelDensity(1)
     video = createCapture(VIDEO)
     video.hide()
@@ -16,12 +23,13 @@ function setup() {
     thresholdSlider = createSlider(0, 255, 20)
     thresholdSlider.position(20, 20)
 
-    grid = new Grid(640, 480);
+    grid = new Grid(640*vScale, 480*vScale);
+    monoSynth = new p5.MonoSynth();
 }
 
 function draw() {
     background(0)
-    image(video, 0,0)
+    image(video, 0,0, 640*vScale, 480*vScale)
 
     currImg = createImage(video.width, video.height)
     currImg.copy(video, 
@@ -29,7 +37,7 @@ function draw() {
         0,0, video.width, video.height)
     
     let scaleFactor = 2
-    scaleFactor = 8  // FOR TESTING ONLY - due to performace of my local machine
+    // scaleFactor = 8  // FOR TESTING ONLY - due to performace of my local machine
     currImg.filter(BLUR,3)
     currImg.resize(currImg.width/scaleFactor, currImg.height/scaleFactor)
 
@@ -75,7 +83,7 @@ function draw() {
     }
     
     diffImg.updatePixels()
-    image(diffImg, 640, 0, 640,480)
+    image(diffImg, 640*vScale, 0, 640*vScale,480*vScale)
 
     // Storing current image to be used as previous frame in the next draw iteration
     prevImg = createImage(currImg.width, currImg.height)
@@ -84,11 +92,4 @@ function draw() {
         0, 0, currImg.width, currImg.height)
 
     grid.run(diffImg)
-}
-
-
-function keyPressed() {
-    if (key == " ") {
-        
-    }
 }

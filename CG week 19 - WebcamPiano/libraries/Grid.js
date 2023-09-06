@@ -105,6 +105,7 @@ class Grid {
     }
   }
   playSynth(i,j) {
+    userStartAudio();
     // This function was created based on https://p5js.org/reference/#/p5.PolySynth
     let index = (i*this.notePos.length+j) // The row and column of the areas is converted to the index to be used in recognising which note shoud be played
     

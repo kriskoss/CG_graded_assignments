@@ -10,7 +10,7 @@ var grid;
 // MY CODE 
 // All modifications to my code were implemented in the Grid.js file. The only modification in this file is the scale factor below.
 // Additionally, I had to download newer versions of the p5.sound and p5.sound.min files, as the older versions contained a bug that prevented sound from being generated correctly.
-
+// My apologies for terrible sound effects . I was doing my best ; - )
 var vScale = 1 // Using scale to reduce the size of the video due to performance of my machine = for debugging only
 
 function setup() {

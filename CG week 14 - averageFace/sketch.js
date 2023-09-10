@@ -12,8 +12,9 @@ var timeout;
     
 //////////////////////////////////////////////////////////
 function preload() { // preload() runs once
-    
+   // I wrote this code 
     for (let i = 0; i<30;i++){
+        // Iterating over the images in the assets folder pushing preloaded images into the imgs array
         let filename = str(i) + ".jpg"
         let folder = "assets/" 
         let path = folder + filename
@@ -23,31 +24,37 @@ function preload() { // preload() runs once
         
     }
     console.log('---images preloaded---')
-
+    // end of the code I wrote
     
 }
 //////////////////////////////////////////////////////////
 function setup() {
     
+   // I wrote this code 
     
     noStroke()
-    
-    
+    // Setting the size of the canvas to fit two images next to each other - first image is used to get the size
     canvasWidth = imgs[0].width*2
     canvasHeight = imgs[0].height
     
     createCanvas(canvasWidth, canvasHeight );
     pixelDensity(1);
 
+    // Creating the offset buffers for average and transit images
     avgImg = createGraphics(canvasWidth/2,canvasHeight)
     transitImg = createGraphics(canvasWidth/2,canvasHeight)
 
+    // instance of the AverageFace class is created
     averageFace = new AverageFace();
 
+    // end of the code I wrote
 }
 //////////////////////////////////////////////////////////
 function draw() {
     background(125);
+
+    // I wrote this code 
+
     // LOADING PIXELS
     averageFace.loadPixelsOfAllImagsAndAvgImg()
         
@@ -61,40 +68,44 @@ function draw() {
     averageFace.drawRightImage()
     
     noLoop()
+
+    // end of the code I wrote
 }
 
 
 
-/////////// MY CODE ////////////////////
+// I wrote this code 
 function keyPressed(){
+    // Key press handler for the averageFace object
     averageFace.keyPressedHandler()
 }
 
 function mouseMoved(){
+    // Mouse moved handler for the average face object
     averageFace.mouseMovedHandler()
 }
 
 
 class AverageFace{
+    // Class contains all the codee
     constructor(){
+        
         this.firstImage = imgs[0]   
         this.currentImgIndex = int(random(0,imgs.length-1)) // Random image index
         this.transition = 100 // Range 0-100, indicates transition between LEFT and RIGHT IMAGE
-        this.newImageLoaded = true
+        // Flags
+        this.newImageLoaded = true 
         this.readyToDrawAllImages = false
     }
 
-    drawFirstImage(){
-        
-        image(this.firstImage,0,0,this.firstImage.width, this.firstImage.height)
-    }
-
     drawRandomImage(){
+        // Function draws the random image when the space is pressed
         let currentImg = imgs[this.currentImgIndex]
         image(currentImg,0,0,currentImg.width,currentImg.height)
     }
 
     loadPixelsOfAllImagsAndAvgImg(){
+        // This fucntion is called whe A is pressed - all images are displayed which were used to generate the average image - this is simple extension
         avgImg.loadPixels()
         transitImg.loadPixels();
         
@@ -163,12 +174,14 @@ class AverageFace{
 
     /// PRIVATE METHODS ///////////////////////////////////////
     #updateRandomImageIndex(){
+        // Generates the random index to be used to display the initial image
         this.currentImgIndex = int(random(0,imgs.length-1))
         console.log(`Displaying image ${this.currentImgIndex}`)
         loop()
     }
     
     #transitBetweenLeftAndRightImage(){
+        // Code responsible for generating the transition between the initial image and the average image
         let mT = map(mouseX,0,width,0,1)
         this.transition = constrain(mT, 0, 1)
         
@@ -191,6 +204,7 @@ class AverageFace{
     }
 
     #drawInstructions(){
+        // Draws instruction text on the canvas at the initial state of the program
         push()
             stroke(255)
             strokeWeight(this.firstImage.width/100)
@@ -240,3 +254,4 @@ class AverageFace{
         
     }
 }
+// end of the code I wrote

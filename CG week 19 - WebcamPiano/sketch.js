@@ -22,9 +22,11 @@ function setup() {
 
     thresholdSlider = createSlider(0, 255, 20)
     thresholdSlider.position(20, 20)
-
+    // I wrote this code
     grid = new Grid(640*vScale, 480*vScale);
     monoSynth = new p5.MonoSynth();
+
+    // end of the code I wrote
 }
 
 function draw() {

@@ -7,14 +7,14 @@ class Grid {
     this.notePos = [];
     this.noteState = [];
 
-    // MY CODE  
+    // I wrote this code
     this.polySynth = new p5.PolySynth(); // Creating instances of Poly- and MonoSynth to be able to synthetize the sound. polySynth object required the latest latest version of p5.sound and p5.sound.min to function correctly.
     this.monoSynth = new p5.MonoSynth()
     
     this.noteInitiated = []; // The array that indicates if the sufficient motion in the area appeared to initiate the sound genereation - it stores boolean values. The value is true only when the motion was detected where previously was not present.
     this.notesArr = []; // The array that contain notes names e.g. A5, C7. It is populated by generateNotesArr() method. It is being used by polySynth object to gereate the sound.
     this.generateNotesArr(); // The function mentioned above.
-    // END OF MY CODE
+    // end of code I wrote
     
     
     // initalise grid structure and state
@@ -81,6 +81,8 @@ class Grid {
       }
     }
   }
+
+  // I wrote this code
   playActiveNote() {
     // Method responsible for calling playSyth and showNote function
     for (var i = 0; i < this.notePos.length; i++) {
@@ -153,3 +155,5 @@ class Grid {
     }
   }
 }
+
+// end of the code I wrote
